@@ -1,4 +1,4 @@
-export {tapeTapLike, mochaTapLike} from '/node_modules/zora/dist/bundle/module.js';
+export {tapeTapLike, mochaTapLike} from 'zora';
 // fancy app
 
 // dump

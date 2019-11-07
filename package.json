@@ -4,16 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.js"
+    "test": "pta test/unit/*.js",
+    "start": "nodemon src/web-server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "arg": "^4.1.1",
+    "http-errors": "^1.7.3",
     "zora": "^3.1.4"
   },
   "devDependencies": {
-    "nodemon": "^1.19.4"
+    "acorn": "^7.1.0",
+    "nodemon": "^1.19.4",
+    "pta": "^0.1.0",
+    "rollup": "^1.26.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "smart-table-core": "^3.0.7"
   }
 }

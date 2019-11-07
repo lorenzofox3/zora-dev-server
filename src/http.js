@@ -1,12 +1,12 @@
-const assert = require('assert');
-const {parse} = require('url');
-const {createServer, IncomingMessage, ServerResponse} = require('src/http.js');
-const {Stream} = require('stream');
+import {ok} from 'assert';
+import {parse} from 'url';
+import {createServer, IncomingMessage, ServerResponse} from 'http';
+import {Stream} from 'stream';
 
 const noop = Object.freeze(() => {
 });
 
-class Request extends IncomingMessage {
+export class Request extends IncomingMessage {
     constructor(...args) {
         super(...args);
     }
@@ -16,7 +16,7 @@ class Request extends IncomingMessage {
     }
 }
 
-class Response extends ServerResponse {
+export class Response extends ServerResponse {
     constructor(...args) {
         super(...args);
     }
@@ -46,14 +46,14 @@ class Response extends ServerResponse {
     }
 }
 
-const compose = (stack = []) => {
-    assert.ok(stack.length >= 1, 'you should pass at least one middleware to the stack');
+export const compose = (stack = []) => {
+    ok(stack.length >= 1, 'you should pass at least one middleware to the stack');
     const current = stack.shift();
     const next = stack[0] !== undefined ? compose(stack) : noop;
     return async (req, res) => current(req, res, () => next(req, res));
 };
 
-const app = exports.app = () => {
+export const app = () => {
     const middlewareStack = [];
     return {
         use(fn) {
@@ -66,6 +66,8 @@ const app = exports.app = () => {
                 await middlewareFn(req, res);
 
                 if (res.body && res.headersSent === false) {
+                    res.statusCode = res.statusCode || 200;
+
                     if (res.body instanceof Stream) {
                         res.body.pipe(res);
                     } else if (typeof res.body === 'string') {
