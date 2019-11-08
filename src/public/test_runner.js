@@ -1,5 +1,4 @@
 import {createHarness} from 'zora';
-import * as st from 'smart-table-core';
 const harness = createHarness();
 
 export const test = harness.test.bind(harness);

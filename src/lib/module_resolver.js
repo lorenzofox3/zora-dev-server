@@ -1,15 +1,5 @@
 import {dirname, relative, resolve as pathResolve} from 'path';
-
-const memoize = (fn, map = new Map()) => {
-    return function memoized(arg) {
-        if (map.has(arg)) {
-            return map.get(arg);
-        }
-
-        map.set(arg, fn(arg));
-        return memoized(arg);
-    };
-};
+import {memoize} from './util.js';
 
 export const resolve = packageId => {
     const packageJSONPath = require.resolve(`${packageId}/package.json`);

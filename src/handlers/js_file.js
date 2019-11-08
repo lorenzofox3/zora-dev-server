@@ -1,11 +1,10 @@
 import {createReadStream} from 'fs';
-import {Readable} from 'stream';
 import {fileHandler as rawFileHandler, Proto as RawProto} from './raw_file.js';
 import {transform} from '../lib/js_transform_stream.js';
 
 const Proto = Object.assign({}, RawProto, {
     body() {
-        return Readable.from(transform(createReadStream(this.path)));
+        return transform(createReadStream(this.path));
     }
 });
 

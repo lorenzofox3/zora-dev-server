@@ -1,73 +1,78 @@
-import {resolve} from 'path';
-import {createFileHandler} from './file_handlers/index.js';
+import {extname, relative, resolve} from 'path';
+import {createFileHandler} from './handlers/index.js';
 import {app as appFactory} from './http.js';
+import {error, log} from './lib/logger.js';
+import createError from 'http-errors';
 
 const INTERNAL_PATH = '_zora';
 
-const resolvePath = (rel, root = process.cwd()) => {
+const resolvePath = rel => {
     let path = rel.startsWith('/') ? rel.slice(1) : rel;
 
-    if (path.startsWith(INTERNAL_PATH)) {
-        path = resolvePath(path.slice(INTERNAL_PATH.length), resolve(__dirname, './public'));
-    } else {
-        path = resolvePath(path);
+    if (extname(rel) === '.glob') {
+        path = resolve(__dirname, './handlers/test_runner.glob');
+    } else if (path.startsWith(INTERNAL_PATH)) {
+        path = resolve(__dirname, 'public', path.slice(INTERNAL_PATH.length + 1));
     }
 
-    return resolve(root, path);
+    return relative(process.cwd(), path);
 };
 
-const app = appFactory();
+export const createServer = () => {
 
-const logger = () => async (req, res, next) => {
-    const start = Date.now();
-    await next();
-    console.log(`${req.method} - ${req.url} - ${Date.now() - start}ms`);
-};
+    const app = appFactory();
 
-/**
- const httpDateOptions = {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hourCycle: 'h24',
-    timeZone: 'GMT'
-};
-
- const httpDate = input => new Date(input).toLocaleDateString('en-US', httpDateOptions);
- **/
-
-const errorHandler = () => async (req, res, next) => {
-    try {
+    const logger = () => async (req, res, next) => {
+        const start = Date.now();
         await next();
-    } catch (e) {
-        console.error(e);
-        if (e.code === 'ENOENT') {
-            res.statusCode = 404;
-            res.body = 'Not Found';
-        } else {
-            res.statusCode = 500;
-            res.body = 'Internal Server Error';
+        log(`${req.method} - ${res.statusCode} - ${req.url} - ${Date.now() - start}ms`);
+    };
+
+    const errorHandler = () => async (req, res, next) => {
+        try {
+            await next();
+        } catch (e) {
+            error(e);
+            res.statusCode = e.status || 500;
+            res.body = e.message || 'Internal Server Error';
         }
-    }
+    };
+
+    const allowedMethod = () => async (req, res, next) => {
+        if (req.method !== 'GET' && req.method !== 'HEAD') {
+            throw createError(405);
+        }
+        await next();
+    };
+
+    const fileServerHandler = () => async (req, res) => {
+        let {path, query} = req;
+        let fileHandler;
+
+        //todo
+        if (path.includes('favicon.ico')) {
+            path = '/_zora/favicon.ico';
+        }
+
+        const actualPath = resolvePath(path);
+        fileHandler = createFileHandler(actualPath, query);
+
+        res.type = fileHandler.type;
+
+        await fileHandler.setCacheHeaders(res);
+
+        if (req.etag && req.etag === res.etag && !(req.headers['cache-control'] || '').includes('no-cache')) {
+            res.statusCode = 304;
+            return;
+        }
+
+        res.body = fileHandler.body();
+    };
+
+    return app
+        .use(logger())
+        .use(errorHandler())
+        .use(allowedMethod())
+        .use(fileServerHandler());
 };
 
-const fileServerHandler = () => async (req, res) => {
-    const {path} = req;
-    const actualPath = resolvePath(path);
-    const fileHandler = createFileHandler(actualPath);
-
-    // todo cache
-
-    res.type = fileHandler.type;
-    res.body = fileHandler.body();
-};
-
-app
-    .use(logger())
-    .use(errorHandler())
-    .use(fileServerHandler())
-    .listen(3000);

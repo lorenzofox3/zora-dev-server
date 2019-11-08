@@ -5,17 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "pta test/unit/*.js",
+    "test:coverage": "c8 node_modules/.bin/pta test/unit/*.js",
     "start": "nodemon src/web-server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "arg": "^4.1.1",
+    "debug": "^4.1.1",
+    "fast-glob": "^3.1.0",
     "http-errors": "^1.7.3",
+    "mime-types": "^2.1.24",
     "zora": "^3.1.4"
   },
   "devDependencies": {
-    "acorn": "^7.1.0",
     "nodemon": "^1.19.4",
     "pta": "^0.1.0",
     "rollup": "^1.26.0",

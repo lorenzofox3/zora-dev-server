@@ -1,7 +1,9 @@
 import {ok} from 'assert';
-import {parse} from 'url';
+import {parse as parseURL} from 'url';
 import {createServer, IncomingMessage, ServerResponse} from 'http';
-import {Stream} from 'stream';
+import {from} from './lib/stream.js';
+import {contentType} from 'mime-types';
+import {error} from './lib/logger.js';
 
 const noop = Object.freeze(() => {
 });
@@ -12,7 +14,17 @@ export class Request extends IncomingMessage {
     }
 
     get path() {
-        return parse(this.url).pathname;
+        // todo memoize parse
+        return parseURL(this.url).pathname;
+    }
+
+    get query() {
+        // todo memoize parse
+        return parseURL(this.url, true).query;
+    }
+
+    get etag() {
+        return this.headers['if-none-match'] || null;
     }
 }
 
@@ -29,20 +41,32 @@ export class Response extends ServerResponse {
         super.setHeader('Content-Type', val);
     }
 
-    get length() {
-        super.getHeader('Content-Length');
-    }
-
-    set length(val) {
-        super.setHeader('Content-Length', val);
-    }
-
     get body() {
         return this._body;
     }
 
     set body(val) {
-        this._body = val;
+        const stream = from(val).on('error', err => {
+            error(err);
+            this.type = contentType('text/html');
+            if (err.code === 'ENOENT') {
+                this.statusCode = 404;
+                this.end('Not Found');
+            } else {
+                this.statusCode = 500;
+                this.end('Internal Server Error');
+            }
+            stream.destroy();
+        });
+        this._body = stream;
+    }
+
+    get etag(){
+        return super.getHeader('Etag');
+    }
+
+    set etag(val) {
+        super.setHeader('Etag', val);
     }
 }
 
@@ -60,27 +84,24 @@ export const app = () => {
             middlewareStack.push(fn);
             return this;
         },
-        listen(port = 3000) {
+        callback() {
             const middlewareFn = compose([...middlewareStack]);
-            const handler = async (req, res) => {
+            return async (req, res) => {
                 await middlewareFn(req, res);
-
                 if (res.body && res.headersSent === false) {
                     res.statusCode = res.statusCode || 200;
-
-                    if (res.body instanceof Stream) {
-                        res.body.pipe(res);
-                    } else if (typeof res.body === 'string') {
-                        res.length = Buffer.byteLength(res.body);
-                        res.end(res.body);
-                    }
+                    res.body.pipe(res);
+                } else {
+                    res.end();
                 }
             };
-
+        },
+        listen(port = 3000) {
             return createServer({
                 ServerResponse: Response,
                 IncomingMessage: Request
-            }, handler).listen(port);
+            }, this.callback())
+                .listen(port);
         }
     };
 };

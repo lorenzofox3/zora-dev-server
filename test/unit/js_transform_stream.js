@@ -114,6 +114,17 @@ export default t => {
         `);
     });
 
+    t.test(`transform mixed import & export declaration`, async t => {
+        const code = `import foo from 'foo';
+        export * from 'bar';
+        import woot from 'woot';`;
+
+        const output = await getOutput(transform(from(code), id => `${id}.js`));
+        t.eq(output, `import foo from "foo.js";
+        export * from "bar.js";
+        import woot from "woot.js";`);
+    });
+
     t.test(`do not transform an export declaration if it does not refer to a source`, async t => {
         const input = `export const foo = 'bar'`;
         const output = await getOutput(transform(from(input), () => '/path/to/whatever.js'));
