@@ -1,15 +1,27 @@
 {
   "name": "zora-dev-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "test runner for browser programs, using zora testing library",
   "main": "index.js",
+  "bin": {
+    "zds": "dist/bundles/bin.js"
+  },
   "scripts": {
     "test": "pta test/unit/*.js",
     "test:coverage": "c8 node_modules/.bin/pta test/unit/*.js",
-    "start": "nodemon src/web-server.js"
+    "start": "nodemon src/web-server.js",
+    "build": "rollup -c rollup/build.js && cp src/bin.js dist/bundles/bin.js && cp -R src/public dist/bundles"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "test",
+    "testing",
+    "browser",
+    "test-harness",
+    "tap",
+    "zora"
+  ],
+  "author": "Laurent RENARD",
+  "license": "MIT",
   "dependencies": {
     "arg": "^4.1.1",
     "debug": "^4.1.1",
@@ -21,9 +33,6 @@
   "devDependencies": {
     "nodemon": "^1.19.4",
     "pta": "^0.1.0",
-    "rollup": "^1.26.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "smart-table-core": "^3.0.7"
+    "rollup": "^1.26.0"
   }
 }

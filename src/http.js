@@ -61,7 +61,7 @@ export class Response extends ServerResponse {
         this._body = stream;
     }
 
-    get etag(){
+    get etag() {
         return super.getHeader('Etag');
     }
 
@@ -79,6 +79,7 @@ export const compose = (stack = []) => {
 
 export const app = () => {
     const middlewareStack = [];
+    let server;
     return {
         use(fn) {
             middlewareStack.push(fn);
@@ -97,11 +98,15 @@ export const app = () => {
             };
         },
         listen(port = 3000) {
-            return createServer({
+            return server = createServer({
                 ServerResponse: Response,
                 IncomingMessage: Request
             }, this.callback())
                 .listen(port);
+        },
+
+        stop() {
+            return server.close();
         }
     };
 };

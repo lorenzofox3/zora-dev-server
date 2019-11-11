@@ -28,7 +28,7 @@ export const html = (glob, files) => `
     <base href="/">
     <title>Tests for: ${glob}</title>
     <link href="/_zora/favicon.ico" rel="icon">
-    <link rel="modulepreload" href="/_zora/test_runner.js" as="script">
+    <link rel="modulepreload" href="/_zora/test_harness.js" as="script">
 ${files
     .map(path => `<link rel="modulepreload" href="/${path}" as="script">`)
     .join('')
@@ -38,12 +38,16 @@ ${files
 ${files
     .map(path => `
 <script type="module">
-    import {test} from '/_zora/test_runner.js';
+    import harness from '/_zora/test_harness.js';
     import spec from '/${path}';
-    test('${path}', spec);
+    harness.test('${path}', spec);
 </script>`)
     .join('')
 }
+<script type="module">
+    import harness from '/_zora/test_harness.js';
+    window.addEventListener('load', () => harness.report());
+</script>
 </body>
 </html>`;
 

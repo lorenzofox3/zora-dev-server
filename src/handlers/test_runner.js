@@ -16,7 +16,7 @@ const Proto = Object.assign({}, RawProto, {
         return html(this.globPattern, files);
     },
     async etag() {
-        //todo we can cache files
+        //todo we can cache files (see body method)
         const files = (await glob(this.globPattern));
         const hash = createHash('sha256');
         hash.update(files.join(','));
