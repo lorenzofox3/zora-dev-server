@@ -1,6 +1,6 @@
 {
   "name": "zora-dev-server",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "test runner for browser programs, using zora testing library",
   "main": "index.js",
   "bin": {
