@@ -1,6 +1,7 @@
 import {extname, relative, resolve} from 'path';
 import {createFileHandler} from './handlers/index.js';
 import {app as appFactory} from './http.js';
+import {resolver} from './lib/module_resolver.js';
 import {error as errorLogger, log as infoLogger} from './lib/logger.js';
 import createError from 'http-errors';
 
@@ -41,16 +42,16 @@ export const allowedMethod = () => async (req, res, next) => {
     await next();
 };
 
-export const fileServerHandler = () => async (req, res) => {
+export const fileServerHandler = (options = {}) => async (req, res) => {
     let {path, query} = req;
     let fileHandler;
 
     //todo
     if (path.includes('favicon.ico')) {
-        path = '/_zora/favicon.ico';
+        path = '/_zora/media/favicon.ico';
     }
 
-    fileHandler = createFileHandler(resolvePath(path), query);
+    fileHandler = createFileHandler(resolvePath(path), Object.assign({}, query, options));
 
     res.type = fileHandler.type;
 
@@ -64,14 +65,17 @@ export const fileServerHandler = () => async (req, res) => {
     res.body = fileHandler.body();
 };
 
-export const createServer = () => {
+export const defaultOptions = Object.freeze({dependenciesMap: {}});
+
+export const createServer = ({dependenciesMap = {}} = defaultOptions) => {
 
     const app = appFactory();
+    const resolve = resolver(new Map(Object.entries(dependenciesMap)));
 
     return app
         .use(logger())
         .use(errorHandler())
         .use(allowedMethod())
-        .use(fileServerHandler());
+        .use(fileServerHandler({resolve}));
 };
 

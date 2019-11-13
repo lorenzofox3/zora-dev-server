@@ -61,5 +61,5 @@ typings/
 .next
 
 .idea
-
+.DS_Store
 dist

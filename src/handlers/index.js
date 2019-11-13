@@ -2,6 +2,7 @@ import {extname} from 'path';
 import {fileHandler as rawFileHandler} from './raw_file.js';
 import {fileHandler as jsFileHandler} from './js_file.js';
 import {fileHandler as testFileHandler} from './test_file.js';
+import {fileHandler as tsFileHandler} from './ts_file.js';
 import {testRunnerHandler} from './test_runner.js';
 
 export const createFileHandler = (file, options = {}) => {
@@ -12,7 +13,7 @@ export const createFileHandler = (file, options = {}) => {
         case '.glob':
             return testRunnerHandler(file, options);
         case '.ts':
-            throw new Error(`File handler for typescript not implemented yet`);
+            return tsFileHandler(file, options);
         case '.test':
             return testFileHandler(file, options);
         default:

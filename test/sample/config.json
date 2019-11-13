@@ -1,0 +1,5 @@
+{
+  "dependenciesMap": {
+    "zora": "foo.js"
+  }
+}

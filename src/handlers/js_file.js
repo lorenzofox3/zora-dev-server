@@ -4,7 +4,7 @@ import {transform} from '../lib/js_transform_stream.js';
 
 const Proto = Object.assign({}, RawProto, {
     body() {
-        return transform(createReadStream(this.path));
+        return transform(createReadStream(this.path), this.options.resolve);
     }
 });
 
@@ -20,6 +20,9 @@ export const fileHandler = (path, options = {}) => {
         },
         path: {
             value: path
+        },
+        options: {
+            value: options
         }
     });
 };

@@ -3,7 +3,7 @@ import {parse as parseURL} from 'url';
 import {createServer, IncomingMessage, ServerResponse} from 'http';
 import {from} from './lib/stream.js';
 import {contentType} from 'mime-types';
-import {error} from './lib/logger.js';
+import {error, log} from './lib/logger.js';
 
 const noop = Object.freeze(() => {
 });
@@ -98,15 +98,31 @@ export const app = () => {
             };
         },
         listen(port = 3000) {
-            return server = createServer({
-                ServerResponse: Response,
-                IncomingMessage: Request
-            }, this.callback())
-                .listen(port);
+            return new Promise((resolve, reject) => {
+                server = createServer({
+                    ServerResponse: Response,
+                    IncomingMessage: Request
+                }, this.callback())
+                    .listen(port, err => {
+                        if (err) {
+                            reject(err);
+                        }
+
+                        log(`listening on port ${port}`);
+
+                        resolve();
+                    });
+            });
         },
 
         stop() {
-            return server.close();
+            return new Promise((resolve, reject) => server.close(err => {
+                if (err) {
+                    reject(err);
+                }
+
+                resolve();
+            }));
         }
     };
 };

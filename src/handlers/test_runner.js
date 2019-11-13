@@ -13,7 +13,7 @@ const DEFAULT_PATTERN = ['test/**/*.js'];
 const Proto = Object.assign({}, RawProto, {
     async body() {
         const files = (await glob(this.globPattern));
-        return html(this.globPattern, files);
+        return html(this.globPattern, files, this.options);
     },
     async etag() {
         //todo we can cache files (see body method)
@@ -24,8 +24,9 @@ const Proto = Object.assign({}, RawProto, {
     }
 });
 
-export const testRunnerHandler = (path, {pattern = DEFAULT_PATTERN} = {pattern: DEFAULT_PATTERN}) => {
+export const testRunnerHandler = (path, options = {}) => {
     const actualPath = path.replace(/\.glob$/, '.js');
+    const {pattern = DEFAULT_PATTERN} = options;
     const globPattern = Array.isArray(pattern) ? pattern : [pattern];
     return Object.create(Proto, {
         type: {
@@ -37,6 +38,9 @@ export const testRunnerHandler = (path, {pattern = DEFAULT_PATTERN} = {pattern: 
         },
         path: {
             value: actualPath
+        },
+        options: {
+            value: options
         }
     });
 };
