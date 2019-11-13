@@ -1,6 +1,6 @@
 {
   "name": "zora-dev-server",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "test runner for browser programs, using zora testing library",
   "main": "dist/bundles/zora-dev-server",
   "bin": {
