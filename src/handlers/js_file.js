@@ -1,22 +1,24 @@
 import {createReadStream} from 'fs';
 import {fileHandler as rawFileHandler, Proto as RawProto} from './raw_file.js';
 import {transform} from '../lib/js_transform_stream.js';
+import {contentType} from 'mime-types';
 
-const Proto = Object.assign({}, RawProto, {
+export const Proto = Object.assign({}, RawProto, {
     body() {
         return transform(createReadStream(this.path), this.options.resolve);
     }
 });
 
 export const fileHandler = (path, options = {}) => {
-    if (options.raw) {
+
+    if (options.format && options.format === 'raw') {
         return rawFileHandler(path, options);
     }
 
     return Object.create(Proto, {
         type: {
             enumerable: true,
-            value: 'application/javascript; charset=utf8'
+            value: contentType('.js')
         },
         path: {
             value: path

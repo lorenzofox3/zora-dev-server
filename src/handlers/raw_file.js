@@ -2,21 +2,13 @@ import {promisify} from 'util';
 import {createReadStream, stat as fStat} from 'fs';
 import {extname} from 'path';
 import {contentType} from 'mime-types';
-import createError from 'http-errors';
 
 const stat = promisify(fStat);
 
 export const Proto = {
     async etag() {
-        try {
-            const fileStat = await stat(this.path);
-            return String(new Date(fileStat.mtime).getTime());
-        } catch (e) {
-            if (e.code === 'ENOENT') {
-                throw createError(404);
-            }
-            throw e;
-        }
+        const fileStat = await stat(this.path);
+        return String(new Date(fileStat.mtime).getTime());
     },
     async setCacheHeaders(res) {
         // node modules files are likely dependencies which should not change: we can cache them more aggressively

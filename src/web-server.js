@@ -8,6 +8,11 @@ import createError from 'http-errors';
 const INTERNAL_PATH = '_zora';
 
 const resolvePath = rel => {
+
+    if (rel === '/') {
+        return './';
+    }
+
     let path = rel.startsWith('/') ? rel.slice(1) : rel;
 
     if (extname(rel) === '.glob') {
@@ -36,7 +41,7 @@ export const errorHandler = (error = errorLogger) => async (req, res, next) => {
 };
 
 export const allowedMethod = () => async (req, res, next) => {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
+    if (req.method !== 'GET') {
         throw createError(405);
     }
     await next();
@@ -46,23 +51,29 @@ export const fileServerHandler = (options = {}) => async (req, res) => {
     let {path, query} = req;
     let fileHandler;
 
-    //todo
     if (path.includes('favicon.ico')) {
         path = '/_zora/media/favicon.ico';
     }
 
-    fileHandler = createFileHandler(resolvePath(path), Object.assign({}, query, options));
+    try {
+        fileHandler = createFileHandler(resolvePath(path), Object.assign({}, query, options));
 
-    res.type = fileHandler.type;
+        res.type = fileHandler.type;
 
-    await fileHandler.setCacheHeaders(res);
+        await fileHandler.setCacheHeaders(res);
 
-    if (req.etag && req.etag === res.etag && !(req.headers['cache-control'] || '').includes('no-cache')) {
-        res.statusCode = 304;
-        return;
+        if (req.etag && req.etag === res.etag && !(req.headers['cache-control'] || '').includes('no-cache')) {
+            res.statusCode = 304;
+            return;
+        }
+
+        res.body = fileHandler.body();
+    } catch (e) {
+        if(e.code === 'ENOENT'){
+            throw createError(404);
+        }
+        throw e;
     }
-
-    res.body = fileHandler.body();
 };
 
 export const defaultOptions = Object.freeze({dependenciesMap: {}});

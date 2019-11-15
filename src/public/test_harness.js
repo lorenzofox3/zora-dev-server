@@ -16,4 +16,4 @@ export const resolveReporter = reporter => {
     }
 };
 
-export const harness = createHarness();
+export const harness = createHarness({runOnly: window.__zora__ && window.__zora__.runOnly});

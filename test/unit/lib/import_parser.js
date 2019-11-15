@@ -14,7 +14,7 @@ import {
     source,
     STAR,
     tokenize
-} from '../../src/lib/import_parser.js';
+} from '../../../src/lib/import_parser.js';
 
 export default t => {
     t.test(`source stream`, t => {

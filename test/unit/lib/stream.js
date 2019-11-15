@@ -1,4 +1,5 @@
-import {from} from '../../src/lib/stream.js';
+import {from} from '../../../src/lib/stream.js';
+import {Readable} from 'stream';
 
 const collectChunk = async function (source) {
     const chunks = [];
@@ -9,8 +10,11 @@ const collectChunk = async function (source) {
 };
 
 export default t => {
-    t.skip(`from stream`, async t => {
-
+    t.test(`from stream`, async t => {
+        t.eq(await collectChunk(from(Readable.from((async function* () {
+            yield 'foo';
+            yield 'bar';
+        })()))), ['foo', 'bar']);
     });
 
     t.test(`from string`, async t => {

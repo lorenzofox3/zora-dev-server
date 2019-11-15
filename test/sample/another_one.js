@@ -1,5 +1,5 @@
 export default t => {
-    t.test(`should fail`, t => {
+    t.skip(`should fail`, t => {
         t.eq({foo: 'bar'}, {foo: 'baz'});
     });
 

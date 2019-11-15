@@ -7,9 +7,9 @@
     "zds": "dist/bundles/bin.js"
   },
   "scripts": {
-    "test": "pta test/unit/*.js",
-    "test:coverage": "c8 node_modules/.bin/pta test/unit/*.js",
-    "start": "nodemon src/web-server.js",
+    "test:public": "",
+    "test:unit": "pta test/unit/{handlers,lib}/*.js test/unit/*.js",
+    "test:coverage": "c8 npm run test:unit",
     "build": "rollup -c rollup/build.js && cp src/bin.js dist/bundles/bin.js && cp -R src/public dist/bundles"
   },
   "keywords": [
@@ -27,7 +27,7 @@
     "debug": "^4.1.1",
     "fast-glob": "^3.1.0",
     "http-errors": "^1.7.3",
-    "mime-types": "^2.1.24",
+    "mime-types": "^2.1.25",
     "resolve": "^1.12.0",
     "zora": "^3.1.4"
   },
@@ -36,8 +36,9 @@
   ],
   "devDependencies": {
     "nodemon": "^1.19.4",
-    "smart-table-core": "^3.0.7",
     "pta": "^0.1.0",
-    "rollup": "^1.26.0"
+    "rollup": "^1.27.0",
+    "smart-table-core": "^3.0.7",
+    "supertest": "^4.0.2"
   }
 }

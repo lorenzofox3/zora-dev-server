@@ -1,4 +1,4 @@
-import {parse} from '../../src/lib/import_parser.js';
+import {parse} from '../../../src/lib/import_parser.js';
 
 export default t => {
     t.test(`parse export all declaration`, t => {

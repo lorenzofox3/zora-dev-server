@@ -1,4 +1,4 @@
-import {replace, transform} from '../../src/lib/js_transform_stream.js';
+import {replace, transform} from '../../../src/lib/js_transform_stream.js';
 
 const from = async function* (string) {
     yield string;

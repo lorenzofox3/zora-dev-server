@@ -110,7 +110,7 @@ export const app = () => {
 
                         log(`listening on port ${port}`);
 
-                        resolve();
+                        resolve(server);
                     });
             });
         },

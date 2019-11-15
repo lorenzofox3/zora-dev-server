@@ -1,4 +1,4 @@
-import {memoize} from '../../src/lib/util.js';
+import {memoize} from '../../../src/lib/util.js';
 
 const stub = () => {
     const calls = [];

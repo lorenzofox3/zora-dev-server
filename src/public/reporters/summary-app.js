@@ -81,6 +81,15 @@ a:hover, a:focus{
     <div id="dot"></div>
 </li>`;
 
+const createTestLink = (val, origin = window.location.origin) => {
+    const testLink = new URL(val.replace(/\.js$/, '.test'), origin);
+    const searchParams = testLink.searchParams;
+    searchParams.append('reporter', 'summary-app');
+    searchParams.append('reporter', 'console');
+    testLink.search = searchParams.toString();
+    return testLink.href;
+};
+
 export class ZoraTestFile extends HTMLElement {
 
     constructor() {
@@ -121,6 +130,10 @@ export class ZoraTestFile extends HTMLElement {
     }
 
     get status() {
+        if (this.error) {
+            return 'errored';
+        }
+
         return this.fail ? 'failing' : (this.skip ? 'skipping' : 'passing');
     }
 
@@ -133,12 +146,7 @@ export class ZoraTestFile extends HTMLElement {
             const fileLink = this.shadowRoot.getElementById(name);
             const srcFileLink = this.shadowRoot.getElementById('src-file');
             fileLink.textContent = newValue;
-            const testLink = new URL(newValue.replace(/\.js$/, '.test'), window.location.origin);
-            const searchParams = testLink.searchParams;
-            searchParams.append('reporter', 'summary-app');
-            searchParams.append('reporter', 'console');
-            testLink.search = searchParams.toString();
-            fileLink.setAttribute('href', testLink.href);
+            fileLink.setAttribute('href', createTestLink(newValue));
             srcFileLink.setAttribute('href', newValue);
         }
     }
@@ -153,6 +161,10 @@ export class ZoraTestFile extends HTMLElement {
 
     incrementSkip() {
         this.setAttribute('skip', String(this.skip + 1));
+    }
+
+    errored(error) {
+        this.error = error;
     }
 }
 
@@ -206,6 +218,13 @@ export class ZoraTestSuite extends HTMLElement {
             fileElement.incrementSkip();
         }
     }
+
+    errored(file, error) {
+        const fileElement = this._testFiles.namedItem(file);
+        if (fileElement) {
+            fileElement.errored(error);
+        }
+    }
 }
 
 export const reporter = ({testFiles = []}) => {
@@ -230,6 +249,13 @@ export const reporter = ({testFiles = []}) => {
         let current = null;
 
         for await (const message of stream) {
+
+            if (message.type === 'BAIL_OUT') {
+                // todo
+                throw message.data;
+                break;
+            }
+
             if (message.type === 'TEST_START' && message.offset === 0) {
                 current = message.data.description;
             }

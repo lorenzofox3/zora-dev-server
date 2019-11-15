@@ -1,5 +1,5 @@
 export const consoleBailOut = logger => message => {
-    throw new Error(message);
+    logger.error(message.data);
 };
 export const consoleTestStart = logger => message => logger.group(message.data.description);
 export const consoleAssertion = logger => message => {
@@ -34,7 +34,7 @@ export const reporter = ({logger = window.console}) => {
             switch (message.type) {
                 case 'BAIL_OUT':
                     bailout(message);
-                    break;
+                    return;
                 case 'TEST_START':
                     testStart(message);
                     break;

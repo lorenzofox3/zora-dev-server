@@ -1,4 +1,4 @@
-import {tee} from '../../src/public/reporters/tee.js';
+import {tee} from '../../../src/public/reporters/tee.js';
 
 export default t => {
 
