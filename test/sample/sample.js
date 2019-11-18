@@ -4,7 +4,10 @@ export default t => {
     t.ok(true, 'whatever');
 
     t.test(`foo`, t=>{
-        t.eq(4,4);
-        t.skip('whatever')
-    })
+        throw new Error('oh no !')
+    });
+
+    t.test('after thrown', t=>{
+        t.ok(true);
+    });
 };

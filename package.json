@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test:public": "",
-    "test:unit": "pta test/unit/{handlers,lib}/*.js test/unit/*.js",
+    "test:unit": "pta test/unit/**/*.js",
     "test:coverage": "c8 npm run test:unit",
     "build": "rollup -c rollup/build.js && cp src/bin.js dist/bundles/bin.js && cp -R src/public dist/bundles"
   },
@@ -29,7 +29,7 @@
     "http-errors": "^1.7.3",
     "mime-types": "^2.1.25",
     "resolve": "^1.12.0",
-    "zora": "^3.1.4"
+    "zora": "^3.1.5"
   },
   "files": [
     "dist"
@@ -37,7 +37,7 @@
   "devDependencies": {
     "nodemon": "^1.19.4",
     "pta": "^0.1.0",
-    "rollup": "^1.27.0",
+    "rollup": "^1.27.2",
     "smart-table-core": "^3.0.7",
     "supertest": "^4.0.2"
   }

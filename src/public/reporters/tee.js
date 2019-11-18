@@ -1,7 +1,8 @@
-async function* teefy(source, buffer1, buffer2) {
+async function* teefy(source, ...buffers) {
     for await (const b of source) {
-        buffer1.push(b);
-        buffer2.push(b);
+        for (const buffer of buffers) {
+            buffer.push(Object.assign({}, b));
+        }
         yield b;
     }
 }
@@ -23,13 +24,12 @@ const StreamPrototype = {
         }
 
         const {done} = await this.source.next();
-        this.done = done;
+        this.done = done && this.buffer.length === 0;
         return this.next();
     },
 
     async return() {
         this.done = true;
-        // todo handle the termination of source if both streams are done ?
     }
 };
 
@@ -42,12 +42,11 @@ const iterator = (source, buffer) => Object.assign(Object.create(StreamPrototype
     }
 }), {done: false});
 
-export const tee = stream => {
+export const tee = (stream, count = 2) => {
+    const buffers = (new Array(count))
+        .fill(0)
+        .map(_ => []);
 
-    const buffer1 = [];
-    const buffer2 = [];
-
-    const source = teefy(stream, buffer1, buffer2);
-
-    return [iterator(source, buffer1), iterator(source, buffer2)];
+    const source = teefy(stream, ...buffers);
+    return buffers.map(b => iterator(source, b));
 };

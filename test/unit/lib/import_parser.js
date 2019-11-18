@@ -153,28 +153,6 @@ export default t => {
             t.eq(scanDoubleQuoteStringLiteral(srcBis), {type: 'Literal', value: 'hello', span: 7, start: 0});
             t.eq(srcBis.peek(), {done: false, value: ' '});
         });
-
-        t.skip(`scan single quote string literal with escape`, t => {
-            const string = `'h\'ello' `;
-            const src = source(string);
-            const srcBis = source(string);
-            const expected = {type: 'Literal', value: `h'ello`, span: 8, start: 0};
-            t.eq(scan(src), expected);
-            t.eq(src.peek(), {done: false, value: ' '});
-            t.eq(scanSingleQuoteStringLiteral(srcBis), expected);
-            t.eq(srcBis.peek(), {done: false, value: ' '});
-        });
-
-        t.skip(`scan double quote string literal with escape`, t => {
-            const string = `"h\"ello" `;
-            const src = source(string);
-            const srcBis = source(string);
-            const expected = {type: 'Literal', value: `h"ello`, span: 8, start: 0};
-            t.eq(scan(src), expected);
-            t.eq(src.peek(), {done: false, value: ' '});
-            t.eq(scanDoubleQuoteStringLiteral(srcBis), expected);
-            t.eq(srcBis.peek(), {done: false, value: ' '});
-        });
     });
 
     t.test(`tokenizer`, async t => {

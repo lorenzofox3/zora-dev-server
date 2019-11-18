@@ -1,6 +1,3 @@
-export const consoleBailOut = logger => message => {
-    logger.error(message.data);
-};
 export const consoleTestStart = logger => message => logger.group(message.data.description);
 export const consoleAssertion = logger => message => {
     if (message.data.operator) {
@@ -24,7 +21,6 @@ export const consoleAssertion = logger => message => {
 export const consoleTestEnd = logger => message => logger.groupEnd();
 export const reporter = ({logger = window.console}) => {
 
-    const bailout = consoleBailOut(logger);
     const testStart = consoleTestStart(logger);
     const assertion = consoleAssertion(logger);
     const testEnd = consoleTestEnd(logger);
@@ -33,8 +29,7 @@ export const reporter = ({logger = window.console}) => {
         for await (const message of stream) {
             switch (message.type) {
                 case 'BAIL_OUT':
-                    bailout(message);
-                    return;
+                    throw message.data;
                 case 'TEST_START':
                     testStart(message);
                     break;

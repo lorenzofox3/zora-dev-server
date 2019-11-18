@@ -159,7 +159,7 @@ test('some test', t=> {
 ## reporters
 
 By default you will see a micro app with a summary of the tests (that is the [summary-app](#summary-app) reporter). But you will have in the console more details, stack traces, etc to troubleshoot your failing tests (that is the [console](#console) reporter).
-If for some reason you wish to change the reporter, you can use the query parameters ``reporter``. You can have at the same time two reporters. This may be useful if you want to have something in the browser and pass info at the same time with the devTool protocol (through console calls) or a network protocol (websocket etc).
+If for some reason you wish to change the reporter, you can use the query parameters ``reporter``. You can have at the same time as many reporters as you want. This may be useful if you want to have something in the browser and pass info at the same time with the devTool protocol (through console calls) or a network protocol (websocket etc).
 
 example: ``http://localhost:<port>/some/test.test?reporter=tap&reporter=summary-app``
 
@@ -176,6 +176,10 @@ example: ``http://localhost:<port>/some/test.test?reporter=tap&reporter=summary-
 // todo
 
 ### tap-indent
+
+// todo
+
+## raw
 
 // todo
 

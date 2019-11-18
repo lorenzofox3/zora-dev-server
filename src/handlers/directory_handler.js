@@ -8,9 +8,10 @@ const readdir = promisify(readdirCallback);
 // todo maybe we could read a .gitignore
 const UNLIST = ['.DS_Store', '.git', '.idea'];
 
-export const extensionToIcon = (file, root) => {
+export const extensionToIcon = (file, root = process.cwd()) => {
     switch (extname(file)) {
         case '.js':
+        case '.mjs':
         case '.ts':
             return '/_zora/media/git.svg';
         case '':

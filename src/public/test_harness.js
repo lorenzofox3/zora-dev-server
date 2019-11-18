@@ -1,5 +1,5 @@
 import {createHarness} from 'zora';
-import {consoleReporter, summaryApp, tap, tapIndent} from '/_zora/reporters.js';
+import {consoleReporter, raw, summaryApp, tap, tapIndent} from '/_zora/reporters.js';
 
 export {tee} from './reporters/tee.js';
 
@@ -11,6 +11,8 @@ export const resolveReporter = reporter => {
             return tapIndent;
         case 'summary-app':
             return summaryApp;
+        case 'raw':
+            return raw;
         default:
             return consoleReporter;
     }
