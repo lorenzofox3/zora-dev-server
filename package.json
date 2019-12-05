@@ -7,9 +7,11 @@
     "zds": "dist/bundles/bin.js"
   },
   "scripts": {
-    "test:public": "",
-    "test:unit": "pta test/unit/**/*.js",
+    "test:public": "node -r esm ./test/unit/public/index.js",
+    "test:unit": "pta test/unit/*.js test/unit/{handlers,lib}/*.js",
+    "test": "npm run test:unit && npm run test:public",
     "test:coverage": "c8 npm run test:unit",
+    "dev": "DEBUG=zora-dev-server:* node -r esm ./test/test_server.js",
     "build": "rollup -c rollup/build.js && cp src/bin.js dist/bundles/bin.js && cp -R src/public dist/bundles"
   },
   "keywords": [
@@ -23,21 +25,23 @@
   "author": "Laurent RENARD",
   "license": "MIT",
   "dependencies": {
-    "arg": "^4.1.1",
+    "arg": "^4.1.2",
     "debug": "^4.1.1",
-    "fast-glob": "^3.1.0",
+    "fast-glob": "^3.1.1",
     "http-errors": "^1.7.3",
     "mime-types": "^2.1.25",
-    "resolve": "^1.12.0",
-    "zora": "^3.1.5"
+    "resolve": "^1.13.1",
+    "zora": "^3.1.6"
   },
   "files": [
     "dist"
   ],
   "devDependencies": {
+    "@lorenzofox3/for-await": "^0.2.0",
     "nodemon": "^1.19.4",
-    "pta": "^0.1.0",
-    "rollup": "^1.27.2",
+    "pta": "^0.1.2",
+    "puppeteer": "^2.0.0",
+    "rollup": "^1.27.8",
     "smart-table-core": "^3.0.7",
     "supertest": "^4.0.2"
   }

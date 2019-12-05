@@ -5,5 +5,5 @@ export const fileHandler = (path, options = {}) => {
         return rawFileHandler(path, options = {});
     }
 
-    throw new Error(`not implemented`);
+    throw new Error(`Not yet implemented`);
 };

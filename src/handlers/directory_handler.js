@@ -55,7 +55,6 @@ export const html = async path => {
 <style>ul{list-style: none; padding: 1em}li{padding: 0.2em; display: flex; align-items: center}li > img {padding: 0.2em 0.8em;}a{margin:0 0.2em;}</style>
 <nav id="breadcrumb">
 ${links.join('<span role="separator">/</span>')}
-<span role="separator"> | </span>
 <a href="/test.glob?pattern=${path + '/**/*.js'}">Run all as tests</a>
 </nav>
 <ul>

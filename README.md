@@ -52,7 +52,7 @@ Note: interestingly, this convention allows you to run your test files with [pta
 // test/answer.js
 export default t => {
     t.test('some test', t=>{
-        t.eq(40+2,42, 'this answer');
+        t.eq(40+2,42, 'the answer');
     });
 }
 ``` 
@@ -118,7 +118,8 @@ For example if you have a test file at ``cwd/test/my_test.js`` which respects th
 
 ### test runners
 
-If you wish to run multiple test files at the same time (matching glob patterns), you can use a special endpoint.
+If you wish to run multiple test files at the same time (matching glob patterns), you can use a special endpoint: ``http://localhost:<port>/test.glob``.
+You can then append glob patterns to run a bunch of test together: ``http://localhost:3000/test.glob?pattern=test/unit/public/**/*.js`` 
 
 // todo isolation with iframe if necessary
 
@@ -165,23 +166,23 @@ example: ``http://localhost:<port>/some/test.test?reporter=tap&reporter=summary-
 
 ### summary-app
 
-// todo
+Use the browser document to display a summary of the tests run.
 
 ### console
 
-// todo
+Use the ``console`` API to create a detailed report of tests. You'll be able to use level filter, etc from the DevTool to quickly spot and fix failing tests 
 
 ### tap
 
-// todo
+Print your test report as a TAP stream in the console
 
 ### tap-indent
 
-// todo
+Same than TAP but with a richer and indented structure
 
-## raw
+### raw
 
-// todo
+Dump zora's protocol messages in the console. It is particularly useful if you want to use ZDS with an automation tool like Puppeteer because you can then transform back the stream with a convenient reporter from the Node process running Puppeteer
 
 ## Log
 
@@ -190,7 +191,7 @@ the DEBUG env variable set to ``zora-dev-server:*``.
 
 ## Caching
 
-The browser comes with a variety of caches. zora-dev-server tries to take advantage of it to be the fastest as possible. You should probably not deactivate the caches while developing, if a file is changed it will be detected.
+Browsers come with a variety of caches. zora-dev-server tries to take advantage of it to be the fastest as possible. You should probably not deactivate the caches while developing, if a file is changed it will be detected.
 However, once you want to swap to another project we recommend to purge the caches especially if you use the same port.
  
 ## As part of CI

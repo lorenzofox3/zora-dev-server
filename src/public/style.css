@@ -22,5 +22,5 @@ a:hover, a:focus {
 }
 
 #breadcrumb > :last-child {
-    align-self: flex-end;
+    margin-left: auto;
 }
